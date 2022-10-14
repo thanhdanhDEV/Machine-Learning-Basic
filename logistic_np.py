@@ -164,8 +164,8 @@ def add_one(x):
     :param x: input data
     """
     # [TODO 1.4]
-    x = 0
-
+    x = np.concatenate((x,np.ones((x.shape[0],1))), axis=1)
+    print(x.shape)
     return x
 
 
@@ -265,7 +265,7 @@ if __name__ == "__main__":
     test_x = reshape2D(test_x)
 
     # # Pad 1 as the last feature of train_x and test_x
-    # train_x = add_one(train_x)
+    train_x = add_one(train_x)
     # test_x = add_one(test_x)
 
     # # Create classifier
