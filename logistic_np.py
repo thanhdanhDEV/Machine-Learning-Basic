@@ -131,8 +131,21 @@ def normalize_all_pixel(train_x, test_x):
     """
     # [TODO 1.2]
     # train_mean and train_std should have the shape of (1, image_height, image_width)
-    train_x = 0
-    test_x = 0
+
+    R = train_x.shape[1]
+    C = train_x.shape[2]
+    
+    mean_train_x = (1/(R*C*num_train))*np.sum(train_x)
+    mean_test_x = (1/(R*C*num_test))*np.sum(test_x)
+    
+    std_train_x = np.sqrt((1/(R*C*num_train))*np.sum((train_x - mean_train_x)**2))
+    std_test_x = np.sqrt((1/(R*C*num_test))*np.sum((test_x - mean_test_x)**2))\
+
+    train_x = (train_x - mean_train_x)/std_train_x
+    test_x = (test_x - mean_test_x)/std_test_x
+
+    print(train_x.shape)
+    print(test_x.shape)
 
     return train_x, test_x
 
@@ -244,8 +257,8 @@ if __name__ == "__main__":
     # #generate_unit_testcase(train_x.copy(), train_y.copy())
 
     # # Normalize our data: choose one of the two methods before training
-    # #train_x, test_x = normalize_all_pixel(train_x, test_x)
-    train_x, test_x = normalize_per_pixel(train_x, test_x)
+    train_x, test_x = normalize_all_pixel(train_x, test_x)
+    # train_x, test_x = normalize_per_pixel(train_x, test_x)
 
 
 
