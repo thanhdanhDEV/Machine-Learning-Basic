@@ -110,6 +110,24 @@ def normalize_per_pixel(train_x, test_x):
     # train_x = ...
     # test_x = ...
 
+    mean_train_x = (1/num_train)*np.sum(train_x, axis=0)
+    mean_test_x = (1/num_test)*np.sum(test_x, axis=0)
+    
+    std_train_x = np.sqrt((1/num_train)*np.sum((train_x - mean_train_x)**2, axis=0))
+    std_test_x = np.sqrt((1/num_test)*np.sum((test_x - mean_test_x)**2, axis=0))
+
+    print(train_x[1][1][1])
+    print(mean_train_x[1][1])
+    print(std_train_x[1][1])
+    print("Cal Direct normalization x : ", (train_x[1][1][1] - mean_train_x[1][1])/std_train_x[1][1])
+    temp = (train_x - mean_train_x)/std_train_x
+    print(temp[1][1][1])
+
+    # print("Mean train shape: ",mean_train_x.shape)
+    # print("Mean test shape: ",mean_test_x.shape)
+    # print("----")
+    # print("Mean train : ",mean_train_x)
+    # print("Mean test : ",mean_test_x)
     train_x = 0
     test_x = 0
 
@@ -232,55 +250,63 @@ if __name__ == "__main__":
     num_train = train_x.shape[0]
     num_test = test_x.shape[0]
 
-    #generate_unit_testcase(train_x.copy(), train_y.copy())
+    ### No change after
 
-    # Normalize our data: choose one of the two methods before training
-    #train_x, test_x = normalize_all_pixel(train_x, test_x)
+
+    # #generate_unit_testcase(train_x.copy(), train_y.copy())
+
+    # # Normalize our data: choose one of the two methods before training
+    # #train_x, test_x = normalize_all_pixel(train_x, test_x)
     train_x, test_x = normalize_per_pixel(train_x, test_x)
 
-    # Reshape our data
-    # train_x: shape=(2400, 64, 64) -> shape=(2400, 64*64)
-    # test_x: shape=(600, 64, 64) -> shape=(600, 64*64)
-    train_x = reshape2D(train_x)
-    test_x = reshape2D(test_x)
 
-    # Pad 1 as the last feature of train_x and test_x
-    train_x = add_one(train_x)
-    test_x = add_one(test_x)
 
-    # Create classifier
-    num_feature = train_x.shape[1]
-    bin_classifier = LogisticClassifier((num_feature, 1))
-    momentum = np.zeros_like(bin_classifier.w)
 
-    # Define hyper-parameters and train-related parameters
-    num_epoch = 1000
-    learning_rate = 0.01
-    momentum_rate = 0.9
-    epochs_to_draw = 100
-    all_loss = []
-    plt.ion()
-    tic = time.clock()
-    for e in range(num_epoch):
-        tic = time.clock()
-        y_hat = bin_classifier.feed_forward(train_x)
-        loss = bin_classifier.compute_loss(train_y, y_hat)
-        grad = bin_classifier.get_grad(train_x, train_y, y_hat)
+    # # Reshape our data
+    # # train_x: shape=(2400, 64, 64) -> shape=(2400, 64*64)
+    # # test_x: shape=(600, 64, 64) -> shape=(600, 64*64)
+    # train_x = reshape2D(train_x)
+    # test_x = reshape2D(test_x)
 
-        # Updating weight: choose either normal SGD or SGD with momentum
-        #bin_classifier.update_weight(grad, learning_rate)
-        bin_classifier.update_weight_momentum(
-            grad, learning_rate, momentum, momentum_rate)
+    # # Pad 1 as the last feature of train_x and test_x
+    # train_x = add_one(train_x)
+    # test_x = add_one(test_x)
 
-        all_loss.append(loss)
+    # # Create classifier
+    # num_feature = train_x.shape[1]
+    # bin_classifier = LogisticClassifier((num_feature, 1))
+    # momentum = np.zeros_like(bin_classifier.w)
 
-        if (e % epochs_to_draw == epochs_to_draw-1):
-            plot_loss(all_loss)
-            plt.show()
-            plt.pause(0.1)
-            print("Epoch %d: loss is %.5f" % (e+1, loss))
-        toc = time.clock()
-        print(toc-tic)
+    # # Define hyper-parameters and train-related parameters
+    # num_epoch = 1000
+    # learning_rate = 0.01
+    # momentum_rate = 0.9
+    # epochs_to_draw = 100
+    # all_loss = []
+    # plt.ion()
+    # tic = time.clock()
+    # for e in range(num_epoch):
+    #     tic = time.clock()
+    #     y_hat = bin_classifier.feed_forward(train_x)
+    #     loss = bin_classifier.compute_loss(train_y, y_hat)
+    #     grad = bin_classifier.get_grad(train_x, train_y, y_hat)
 
-    y_hat = bin_classifier.feed_forward(test_x)
-    test(y_hat, test_y)
+    #     # Updating weight: choose either normal SGD or SGD with momentum
+    #     #bin_classifier.update_weight(grad, learning_rate)
+    #     bin_classifier.update_weight_momentum(
+    #         grad, learning_rate, momentum, momentum_rate)
+
+    #     all_loss.append(loss)
+
+    #     if (e % epochs_to_draw == epochs_to_draw-1):
+    #         plot_loss(all_loss)
+    #         plt.show()
+    #         plt.pause(0.1)
+    #         print("Epoch %d: loss is %.5f" % (e+1, loss))
+    #     toc = time.clock()
+    #     print(toc-tic)
+
+    # y_hat = bin_classifier.feed_forward(test_x)
+    # test(y_hat, test_y)
+
+
