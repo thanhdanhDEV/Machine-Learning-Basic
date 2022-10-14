@@ -134,7 +134,7 @@ def normalize_all_pixel(train_x, test_x):
 
     R = train_x.shape[1]
     C = train_x.shape[2]
-    
+
     mean_train_x = (1/(R*C*num_train))*np.sum(train_x)
     mean_test_x = (1/(R*C*num_test))*np.sum(test_x)
     
@@ -143,9 +143,6 @@ def normalize_all_pixel(train_x, test_x):
 
     train_x = (train_x - mean_train_x)/std_train_x
     test_x = (test_x - mean_test_x)/std_test_x
-
-    print(train_x.shape)
-    print(test_x.shape)
 
     return train_x, test_x
 
