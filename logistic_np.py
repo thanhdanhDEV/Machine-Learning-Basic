@@ -152,7 +152,7 @@ def reshape2D(tensor):
     Reshape our 3D tensors to 2D. A 3D tensor of shape (num_samples, image_height, image_width) must be reshaped into (num_samples, image_height*image_width)
     """
     # [TODO 1.3]
-    tensor = 0
+    tensor = tensor.reshape(tensor.shape[0], -1)
 
     return tensor
 
@@ -248,23 +248,21 @@ if __name__ == "__main__":
     num_train = train_x.shape[0]
     num_test = test_x.shape[0]
 
+    #generate_unit_testcase(train_x.copy(), train_y.copy())
+
+    # Normalize our data: choose one of the two methods before training
+    # train_x, test_x = normalize_all_pixel(train_x, test_x)
+    train_x, test_x = normalize_per_pixel(train_x, test_x)
+
+
     ### No change after
 
 
-    # #generate_unit_testcase(train_x.copy(), train_y.copy())
-
-    # # Normalize our data: choose one of the two methods before training
-    train_x, test_x = normalize_all_pixel(train_x, test_x)
-    # train_x, test_x = normalize_per_pixel(train_x, test_x)
-
-
-
-
-    # # Reshape our data
-    # # train_x: shape=(2400, 64, 64) -> shape=(2400, 64*64)
-    # # test_x: shape=(600, 64, 64) -> shape=(600, 64*64)
-    # train_x = reshape2D(train_x)
-    # test_x = reshape2D(test_x)
+    # Reshape our data
+    # train_x: shape=(2400, 64, 64) -> shape=(2400, 64*64)
+    # test_x: shape=(600, 64, 64) -> shape=(600, 64*64)
+    train_x = reshape2D(train_x)
+    test_x = reshape2D(test_x)
 
     # # Pad 1 as the last feature of train_x and test_x
     # train_x = add_one(train_x)
