@@ -43,7 +43,7 @@ class LogisticClassifier(object):
 
         :return loss: a single value
         """
-        # [TODO 1.6]
+        # [TODO 1.6]    
         # Compute loss value (a single number)
         m = y.shape[0]
         loss = (-1/m)*np.sum(y@np.log10(y_hat) + (1 - y)@np.log10(1 - y_hat))
@@ -62,7 +62,8 @@ class LogisticClassifier(object):
         # [TODO 1.7]
         # Compute the gradient matrix of w, it has the same size of w
 
-        w_grad = 0
+        m = y.shape[0]
+        w_grad = (1/m)*np.sum(x.T@(y - y_hat),axis=1)
         return w_grad
 
     def update_weight(self, grad, learning_rate):
@@ -268,6 +269,9 @@ if __name__ == "__main__":
     # Create classifier
     num_feature = train_x.shape[1]
     bin_classifier = LogisticClassifier((num_feature, 1))
+    predict_y = bin_classifier.feed_forward(train_x)
+    grad = bin_classifier.get_grad(train_x,train_y,predict_y)
+    print(grad.shape)
 
     # momentum = np.zeros_like(bin_classifier.w)
 
