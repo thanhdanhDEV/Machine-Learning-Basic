@@ -165,7 +165,6 @@ def add_one(x):
     """
     # [TODO 1.4]
     x = np.concatenate((x,np.ones((x.shape[0],1))), axis=1)
-    print(x.shape)
     return x
 
 
