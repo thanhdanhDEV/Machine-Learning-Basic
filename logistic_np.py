@@ -116,19 +116,8 @@ def normalize_per_pixel(train_x, test_x):
     std_train_x = np.sqrt((1/num_train)*np.sum((train_x - mean_train_x)**2, axis=0))
     std_test_x = np.sqrt((1/num_test)*np.sum((test_x - mean_test_x)**2, axis=0))
 
-    print(train_x[1][1][1])
-    print(mean_train_x[1][1])
-    print(std_train_x[1][1])
-    print("Cal Direct normalization x : ", (train_x[1][1][1] - mean_train_x[1][1])/std_train_x[1][1])
-    print("Cal Matrix normalization x : ", ((train_x - mean_train_x)/std_train_x)[1][1][1])
-
-    # print("Mean train shape: ",mean_train_x.shape)
-    # print("Mean test shape: ",mean_test_x.shape)
-    # print("----")
-    # print("Mean train : ",mean_train_x)
-    # print("Mean test : ",mean_test_x)
-    train_x = 0
-    test_x = 0
+    train_x = (train_x - mean_train_x)/std_train_x
+    test_x = (test_x - mean_test_x)/std_test_x
 
     return train_x, test_x
 
