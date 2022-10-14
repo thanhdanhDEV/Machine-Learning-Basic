@@ -120,8 +120,7 @@ def normalize_per_pixel(train_x, test_x):
     print(mean_train_x[1][1])
     print(std_train_x[1][1])
     print("Cal Direct normalization x : ", (train_x[1][1][1] - mean_train_x[1][1])/std_train_x[1][1])
-    temp = (train_x - mean_train_x)/std_train_x
-    print(temp[1][1][1])
+    print("Cal Matrix normalization x : ", ((train_x - mean_train_x)/std_train_x)[1][1][1])
 
     # print("Mean train shape: ",mean_train_x.shape)
     # print("Mean test shape: ",mean_test_x.shape)
