@@ -30,8 +30,8 @@ class LogisticClassifier(object):
         """
         # [TODO 1.5]
         # Compute feedforward result
-
-        result = 0
+        z = x@self.w
+        result = 1/(1 + np.exp(-z))
         return result
 
     def compute_loss(self, y, y_hat):
@@ -253,10 +253,6 @@ if __name__ == "__main__":
     # train_x, test_x = normalize_all_pixel(train_x, test_x)
     train_x, test_x = normalize_per_pixel(train_x, test_x)
 
-
-    ### No change after
-
-
     # Reshape our data
     # train_x: shape=(2400, 64, 64) -> shape=(2400, 64*64)
     # test_x: shape=(600, 64, 64) -> shape=(600, 64*64)
@@ -265,11 +261,14 @@ if __name__ == "__main__":
 
     # # Pad 1 as the last feature of train_x and test_x
     train_x = add_one(train_x)
-    # test_x = add_one(test_x)
+    test_x = add_one(test_x)
 
-    # # Create classifier
-    # num_feature = train_x.shape[1]
-    # bin_classifier = LogisticClassifier((num_feature, 1))
+    ### No change after
+
+    # Create classifier
+    num_feature = train_x.shape[1]
+    bin_classifier = LogisticClassifier((num_feature, 1))
+    bin_classifier.feed_forward(train_x)
     # momentum = np.zeros_like(bin_classifier.w)
 
     # # Define hyper-parameters and train-related parameters
