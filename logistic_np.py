@@ -45,8 +45,8 @@ class LogisticClassifier(object):
         """
         # [TODO 1.6]
         # Compute loss value (a single number)
-
-        loss = 0
+        m = y.shape[0]
+        loss = (-1/m)*np.sum(y@np.log10(y_hat) + (1 - y)@np.log10(1 - y_hat))
         # print(loss.shape)
         return loss
 
@@ -268,7 +268,7 @@ if __name__ == "__main__":
     # Create classifier
     num_feature = train_x.shape[1]
     bin_classifier = LogisticClassifier((num_feature, 1))
-    bin_classifier.feed_forward(train_x)
+
     # momentum = np.zeros_like(bin_classifier.w)
 
     # # Define hyper-parameters and train-related parameters
