@@ -63,7 +63,7 @@ class LogisticClassifier(object):
         # Compute the gradient matrix of w, it has the same size of w
 
         m = y.shape[0]
-        w_grad = (1/m)*np.sum(x.T@(y - y_hat),axis=1)
+        w_grad = (1/m)*np.sum(x.T@(y - y_hat),axis=1).reshape(x.shape[1],1)
         return w_grad
 
     def update_weight(self, grad, learning_rate):
@@ -76,7 +76,8 @@ class LogisticClassifier(object):
         # [TODO 1.8]
         # Update w using SGD
 
-        self.w = 0
+        self.w = self.w - learning_rate*grad
+        print(self.w.shape)
 
     def update_weight_momentum(self, grad, learning_rate, momentum, momentum_rate):
         """update_weight with momentum
@@ -271,6 +272,7 @@ if __name__ == "__main__":
     bin_classifier = LogisticClassifier((num_feature, 1))
     predict_y = bin_classifier.feed_forward(train_x)
     grad = bin_classifier.get_grad(train_x,train_y,predict_y)
+    update_w = bin_classifier.update_weight(grad,0.01)
     print(grad.shape)
 
     # momentum = np.zeros_like(bin_classifier.w)
