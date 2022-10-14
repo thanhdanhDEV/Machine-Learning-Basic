@@ -90,8 +90,8 @@ class LogisticClassifier(object):
         """
         # [TODO 1.9]
         # Update w using SGD with momentum
-
-        self.w = 0
+        momentum = momentum_rate*momentum + learning_rate*grad
+        self.w = self.w - momentum
 
 
 def plot_loss(all_loss):
@@ -272,41 +272,41 @@ if __name__ == "__main__":
     bin_classifier = LogisticClassifier((num_feature, 1))
     predict_y = bin_classifier.feed_forward(train_x)
     grad = bin_classifier.get_grad(train_x,train_y,predict_y)
-    update_w = bin_classifier.update_weight(grad,0.01)
+    # update_w = bin_classifier.update_weight(grad,0.01)
     print(grad.shape)
 
-    # momentum = np.zeros_like(bin_classifier.w)
+    momentum = np.zeros_like(bin_classifier.w)
 
-    # # Define hyper-parameters and train-related parameters
-    # num_epoch = 1000
-    # learning_rate = 0.01
-    # momentum_rate = 0.9
-    # epochs_to_draw = 100
-    # all_loss = []
-    # plt.ion()
-    # tic = time.clock()
-    # for e in range(num_epoch):
-    #     tic = time.clock()
-    #     y_hat = bin_classifier.feed_forward(train_x)
-    #     loss = bin_classifier.compute_loss(train_y, y_hat)
-    #     grad = bin_classifier.get_grad(train_x, train_y, y_hat)
+    # Define hyper-parameters and train-related parameters
+    num_epoch = 1000
+    learning_rate = 0.01
+    momentum_rate = 0.9
+    epochs_to_draw = 100
+    all_loss = []
+    plt.ion()
+    tic = time.clock()
+    for e in range(num_epoch):
+        tic = time.clock()
+        y_hat = bin_classifier.feed_forward(train_x)
+        loss = bin_classifier.compute_loss(train_y, y_hat)
+        grad = bin_classifier.get_grad(train_x, train_y, y_hat)
 
-    #     # Updating weight: choose either normal SGD or SGD with momentum
-    #     #bin_classifier.update_weight(grad, learning_rate)
-    #     bin_classifier.update_weight_momentum(
-    #         grad, learning_rate, momentum, momentum_rate)
+        # Updating weight: choose either normal SGD or SGD with momentum
+        #bin_classifier.update_weight(grad, learning_rate)
+        bin_classifier.update_weight_momentum(
+            grad, learning_rate, momentum, momentum_rate)
 
-    #     all_loss.append(loss)
+        all_loss.append(loss)
 
-    #     if (e % epochs_to_draw == epochs_to_draw-1):
-    #         plot_loss(all_loss)
-    #         plt.show()
-    #         plt.pause(0.1)
-    #         print("Epoch %d: loss is %.5f" % (e+1, loss))
-    #     toc = time.clock()
-    #     print(toc-tic)
+        if (e % epochs_to_draw == epochs_to_draw-1):
+            plot_loss(all_loss)
+            plt.show()
+            plt.pause(0.1)
+            print("Epoch %d: loss is %.5f" % (e+1, loss))
+        toc = time.clock()
+        print(toc-tic)
 
-    # y_hat = bin_classifier.feed_forward(test_x)
-    # test(y_hat, test_y)
+    y_hat = bin_classifier.feed_forward(test_x)
+    test(y_hat, test_y)
 
 
