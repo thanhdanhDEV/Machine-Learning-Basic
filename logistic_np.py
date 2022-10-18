@@ -177,12 +177,33 @@ def test(y_hat, test_y):
     """
 
     # [TODO 1.10]
+
+    y_predict = np.zeros(y_hat.shape[0])
+    y_predict[np.where(y_hat > 0.5)[0]] = 1
+    TP = 0
+    FP = 0
+    TN = 0
+    FN = 0
+    P = 0
+    for i in range(y_hat.shape[0]):
+        if y_predict[i] == 1 and test_y[i] == 1:
+            TP = TP + 1
+        elif y_predict[i] == 1 and test_y[i] == 0:
+            FP = FP + 1
+        elif y_predict[i] == 0 and test_y[i] == 0:
+            TN = TN + 1
+        elif y_predict[i] == 0 and test_y[i] == 1:
+            FN = FN + 1
+    P = TP + FN
+    
+    
     # Compute test scores using test_y and y_hat
-    #precision = TP/(TP+FP)
-    precision = 0
-    #recall = TP/P
-    recall = 0
-    f1 = 0
+    precision = TP/(TP+FP)
+    # precision = 0
+    recall = TP/P
+    # recall = 0
+    f1 = 2*(precision*recall)/(precision + recall)
+
     print("Precision: %.3f" % precision)
     print("Recall: %.3f" % recall)
     print("F1-score: %.3f" % f1)
@@ -273,8 +294,8 @@ if __name__ == "__main__":
 
     # Define hyper-parameters and train-related parameters
     num_epoch = 1000
-    learning_rate = 0.001
-    momentum_rate = 0.009
+    learning_rate = 0.01
+    momentum_rate = 0.9
     epochs_to_draw = 100
     all_loss = []
     plt.ion()
@@ -305,6 +326,4 @@ if __name__ == "__main__":
 
     y_hat = bin_classifier.feed_forward(test_x)
     test(y_hat, test_y)
-    # print(all_loss[1])
-
 
