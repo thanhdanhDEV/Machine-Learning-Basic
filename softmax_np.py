@@ -101,7 +101,22 @@ def normalize(train_x, val_x, test_x):
     # [TODO 2.1]
     # train_mean and train_std should have the shape of (1, 1)
 
-    return 
+    R = train_x.shape[1]
+    C = 1
+
+    mean_train_x = (1/(R*C*num_train))*np.sum(train_x)
+    mean_val_x = (1/(R*C*num_val))*np.sum(val_x)
+    mean_test_x = (1/(R*C*num_test))*np.sum(test_x)
+    
+    std_train_x = np.sqrt((1/(R*C*num_train))*np.sum((train_x - mean_train_x)**2))
+    std_val_x = np.sqrt((1/(R*C*num_val))*np.sum((train_x - mean_val_x)**2))
+    std_test_x = np.sqrt((1/(R*C*num_test))*np.sum((test_x - mean_test_x)**2))
+
+    train_x = (train_x - mean_train_x)/std_train_x
+    val_x = (val_x - mean_val_x)/std_val_x
+    test_x = (test_x - mean_test_x)/std_test_x
+    
+    return train_x, val_x, test_x
 
 def create_one_hot(labels, num_k=10):
     """create_one_hot
@@ -112,7 +127,11 @@ def create_one_hot(labels, num_k=10):
     """
     # [TODO 2.2]
     # Create the one-hot label matrix here based on labels
-    
+    unit_matrix = np.array(np.identity(num_k),dtype = np.float32)
+    one_hot_labels = np.zeros((labels.shape[0], num_k))
+
+    for i in range(labels.shape[0]):
+        one_hot_labels[i] = unit_matrix[labels[i]]
     return one_hot_labels
 
 
@@ -152,52 +171,52 @@ if __name__ == "__main__":
 
     # Convert label lists to one-hot (one-of-k) encoding
     train_y = create_one_hot(train_y)
-    val_y = create_one_hot(val_y)
-    test_y = create_one_hot(test_y)
+    # val_y = create_one_hot(val_y)
+    # test_y = create_one_hot(test_y)
 
-    # Normalize our data
-    train_x, val_x, test_x = normalize(train_x, val_x, test_x)
+    # # Normalize our data
+    # train_x, val_x, test_x = normalize(train_x, val_x, test_x)
     
-    # Pad 1 as the last feature of train_x and test_x
-    train_x = add_one(train_x) 
-    val_x = add_one(val_x)
-    test_x = add_one(test_x)
+    # # Pad 1 as the last feature of train_x and test_x
+    # train_x = add_one(train_x) 
+    # val_x = add_one(val_x)
+    # test_x = add_one(test_x)
     
-    # Create classifier
-    num_feature = train_x.shape[1]
-    dec_classifier = SoftmaxClassifier((num_feature, 10))
-    momentum = np.zeros_like(dec_classifier.w)
+    # # Create classifier
+    # num_feature = train_x.shape[1]
+    # dec_classifier = SoftmaxClassifier((num_feature, 10))
+    # momentum = np.zeros_like(dec_classifier.w)
 
-    # Define hyper-parameters and train-related parameters
-    num_epoch = 3347
-    learning_rate = 0.01
-    momentum_rate = 0.9
-    epochs_to_draw = 10
-    all_train_loss = []
-    all_val_loss = []
-    plt.ion()
+    # # Define hyper-parameters and train-related parameters
+    # num_epoch = 3347
+    # learning_rate = 0.01
+    # momentum_rate = 0.9
+    # epochs_to_draw = 10
+    # all_train_loss = []
+    # all_val_loss = []
+    # plt.ion()
 
-    for e in range(num_epoch):    
-        tic = time.clock()
-        train_y_hat = dec_classifier.feed_forward(train_x)
-        val_y_hat = dec_classifier.feed_forward(val_x)
+    # for e in range(num_epoch):    
+    #     tic = time.clock()
+    #     train_y_hat = dec_classifier.feed_forward(train_x)
+    #     val_y_hat = dec_classifier.feed_forward(val_x)
 
-        train_loss = dec_classifier.compute_loss(train_y, train_y_hat)
-        val_loss = dec_classifier.compute_loss(val_y, val_y_hat)
+    #     train_loss = dec_classifier.compute_loss(train_y, train_y_hat)
+    #     val_loss = dec_classifier.compute_loss(val_y, val_y_hat)
 
-        grad = dec_classifier.get_grad(train_x, train_y, train_y_hat)
+    #     grad = dec_classifier.get_grad(train_x, train_y, train_y_hat)
        
-        # dec_classifier.numerical_check(train_x, train_y, grad)
-        # Updating weight: choose either normal SGD or SGD with momentum
-        dec_classifier.update_weight(grad, learning_rate)
-        #dec_classifier.update_weight_momentum(grad, learning_rate, momentum, momentum_rate)
+    #     # dec_classifier.numerical_check(train_x, train_y, grad)
+    #     # Updating weight: choose either normal SGD or SGD with momentum
+    #     dec_classifier.update_weight(grad, learning_rate)
+    #     #dec_classifier.update_weight_momentum(grad, learning_rate, momentum, momentum_rate)
 
-        all_train_loss.append(train_loss) 
-        all_val_loss.append(val_loss)
-        toc = time.clock()
-        print(toc-tic)
-        # [TODO 2.6]
-        # Propose your own stopping condition here
+    #     all_train_loss.append(train_loss) 
+    #     all_val_loss.append(val_loss)
+    #     toc = time.clock()
+    #     print(toc-tic)
+    #     # [TODO 2.6]
+    #     # Propose your own stopping condition here
 
-    y_hat = dec_classifier.feed_forward(test_x)
-    test(y_hat, test_y)
+    # y_hat = dec_classifier.feed_forward(test_x)
+    # test(y_hat, test_y)
