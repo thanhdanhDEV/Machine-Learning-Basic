@@ -163,29 +163,16 @@ def test(y_hat, test_y):
 
     confusion_mat = np.zeros((10,10))
 
-    confusion_mat = metrics.confusion_matrix(test_y_scalar, y_hat_scalar)
- 
     # [TODO 2.7]
     # Compute the confusion matrix here
+    confusion_mat = metrics.confusion_matrix(test_y_scalar, y_hat_scalar)
 
     confusion_mat = confusion_mat/np.sum(confusion_mat,axis=1)
-    # np.set_printoptions(precision=2)
-    # print('Confusion matrix:')
-    # print(confusion_mat)
-    # print('Diagonal values:')
-    # print(confusion_mat.flatten()[0::11])
-
-    #Visualization confusion matrix by Seaborn
-    cm_df = pd.DataFrame(confusion_mat,
-                    index = ['class 0','class 1','class 2','class 3','class 4','class 5','class 6','class 7','class 8','class 9'], 
-                    columns = ['class 0','class 1','class 2','class 3','class 4','class 5','class 6','class 7','class 8','class 9'])
-    plt.figure(figsize=(10,8))
-    sns.heatmap(cm_df, annot=True)
-    plt.title('Confusion Matrix')
-    plt.ylabel('Actal Values')
-    plt.xlabel('Predicted Values')
-    plt.show()
-    plt.waitforbuttonpress()
+    np.set_printoptions(precision=2)
+    print('Confusion matrix:')
+    print(confusion_mat)
+    print('Diagonal values:')
+    print(confusion_mat.flatten()[0::11])
 
 
 if __name__ == "__main__":
