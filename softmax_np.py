@@ -168,7 +168,7 @@ def test(y_hat, test_y):
     # [TODO 2.7]
     # Compute the confusion matrix here
 
-    # confusion_mat = confusion_mat/np.sum(confusion_mat,axis=1)
+    confusion_mat = confusion_mat/np.sum(confusion_mat,axis=1)
     # np.set_printoptions(precision=2)
     # print('Confusion matrix:')
     # print(confusion_mat)
@@ -179,7 +179,7 @@ def test(y_hat, test_y):
     cm_df = pd.DataFrame(confusion_mat,
                     index = ['class 0','class 1','class 2','class 3','class 4','class 5','class 6','class 7','class 8','class 9'], 
                     columns = ['class 0','class 1','class 2','class 3','class 4','class 5','class 6','class 7','class 8','class 9'])
-    plt.figure(figsize=(5,4))
+    plt.figure(figsize=(10,8))
     sns.heatmap(cm_df, annot=True)
     plt.title('Confusion Matrix')
     plt.ylabel('Actal Values')
@@ -246,11 +246,11 @@ if __name__ == "__main__":
         all_train_loss.append(train_loss) 
         all_val_loss.append(val_loss)
         
-        if (e % epochs_to_draw == epochs_to_draw-1):
-            plot_loss(all_train_loss, all_val_loss)
-            plt.show()
-            plt.pause(0.1)
-            print("Epoch %d: train loss is %f and val loss is %f" % (e+1, train_loss, val_loss))
+        # if (e % epochs_to_draw == epochs_to_draw-1):
+        #     plot_loss(all_train_loss, all_val_loss)
+        #     plt.show()
+        #     plt.pause(0.1)
+        #     print("Epoch %d: train loss is %f and val loss is %f" % (e+1, train_loss, val_loss))
         # toc = time.clock()
         # print(toc-tic)
         # [TODO 2.6]
