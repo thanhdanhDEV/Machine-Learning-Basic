@@ -9,6 +9,10 @@ from logistic_np import add_one, LogisticClassifier
 import time
 #import pdb
 
+import pandas as pd
+from sklearn import metrics
+import seaborn as sns
+
 
 class SoftmaxClassifier(LogisticClassifier):
     def __init__(self, w_shape):
@@ -27,9 +31,9 @@ class SoftmaxClassifier(LogisticClassifier):
         """
         # [TODO 2.3]
         # Compute softmax
-
-        return 
-
+        e_z = np.exp(x - np.max(x, axis = 1, keepdims = True))
+        a = e_z/e_z.sum(axis = 1, keepdims = True)
+        return a
 
     def feed_forward(self, x):
         """feed_forward
@@ -39,8 +43,10 @@ class SoftmaxClassifier(LogisticClassifier):
         """
         # [TODO 2.3]
         # Compute a feed forward pass
-        
-        return 
+
+        z = x@self.w
+        y_hat = self.softmax(z)
+        return y_hat
 
 
     def compute_loss(self, y, y_hat):
@@ -52,8 +58,10 @@ class SoftmaxClassifier(LogisticClassifier):
         """
         # [TODO 2.4]
         # Compute categorical loss
+        m = y.shape[0]
+        loss = (-1/m)*np.sum(y*np.log(y_hat))
 
-        return 
+        return loss
         
 
 
@@ -66,8 +74,9 @@ class SoftmaxClassifier(LogisticClassifier):
         """ 
         # [TODO 2.5]
         # Compute gradient of the loss function with respect to w
-
-        return 
+        m = y.shape[0]
+        grad = (1/m)*x.T@(y_hat - y)
+        return grad
 
 
 def plot_loss(train_loss, val_loss):
@@ -144,12 +153,24 @@ def test(y_hat, test_y):
     :param test_y: test labels
     """
     
-    confusion_mat = np.zeros((10,10))
+    # Convert one - hot matrix y_hat, test_y -> scalar vector  y_hat_scalar, test_y_scalar
+    y_hat_scalar = np.zeros((y_hat.shape[0]))
+    test_y_scalar = np.zeros((test_y.shape[0]))
     
+    for i in range(y_hat.shape[0]):
+        y_hat_scalar[i] = np.where(y_hat[i]==np.max(y_hat[i]))[0]
+        test_y_scalar[i] = np.where(test_y[i]==np.max(test_y[i]))[0]
+
+    confusion_mat = np.zeros((10,10))
+
+    confusion_mat = metrics.confusion_matrix(test_y_scalar, y_hat_scalar)
+    cm_df = pd.DataFrame(confusion_mat,
+                        index = ['class 0','class 1','class 2','class 3','class 4','class 5','class 6','class 7','class 8','class 9'], 
+                        columns = ['class 0','class 1','class 2','class 3','class 4','class 5','class 6','class 7','class 8','class 9'])
     # [TODO 2.7]
     # Compute the confusion matrix here
 
-    #confusion_mat = confusion_mat/np.sum(confusion_mat,axis=1)
+    confusion_mat = confusion_mat/np.sum(confusion_mat,axis=1)
     np.set_printoptions(precision=2)
     print('Confusion matrix:')
     print(confusion_mat)
@@ -171,52 +192,64 @@ if __name__ == "__main__":
 
     # Convert label lists to one-hot (one-of-k) encoding
     train_y = create_one_hot(train_y)
-    # val_y = create_one_hot(val_y)
-    # test_y = create_one_hot(test_y)
+    val_y = create_one_hot(val_y)
+    test_y = create_one_hot(test_y)
 
-    # # Normalize our data
-    # train_x, val_x, test_x = normalize(train_x, val_x, test_x)
+    # Normalize our data
+    train_x, val_x, test_x = normalize(train_x, val_x, test_x)
+
+    # Pad 1 as the last feature of train_x and test_x
+    train_x = add_one(train_x) 
+    val_x = add_one(val_x)
+    test_x = add_one(test_x)
+
     
-    # # Pad 1 as the last feature of train_x and test_x
-    # train_x = add_one(train_x) 
-    # val_x = add_one(val_x)
-    # test_x = add_one(test_x)
-    
-    # # Create classifier
-    # num_feature = train_x.shape[1]
-    # dec_classifier = SoftmaxClassifier((num_feature, 10))
-    # momentum = np.zeros_like(dec_classifier.w)
+    # Create classifier
+    num_feature = train_x.shape[1]
+    dec_classifier = SoftmaxClassifier((num_feature, 10))
+    momentum = np.zeros_like(dec_classifier.w)
 
-    # # Define hyper-parameters and train-related parameters
-    # num_epoch = 3347
-    # learning_rate = 0.01
-    # momentum_rate = 0.9
-    # epochs_to_draw = 10
-    # all_train_loss = []
-    # all_val_loss = []
-    # plt.ion()
+    # Define hyper-parameters and train-related parameters
+    num_epoch = 3000
+    learning_rate = 0.01
+    momentum_rate = 0.9
+    epochs_to_draw = 1000
+    all_train_loss = []
+    all_val_loss = []
+    plt.ion()
 
-    # for e in range(num_epoch):    
-    #     tic = time.clock()
-    #     train_y_hat = dec_classifier.feed_forward(train_x)
-    #     val_y_hat = dec_classifier.feed_forward(val_x)
+    for e in range(num_epoch):    
+        # tic = time.clock()
+        train_y_hat = dec_classifier.feed_forward(train_x)
+        val_y_hat = dec_classifier.feed_forward(val_x)
 
-    #     train_loss = dec_classifier.compute_loss(train_y, train_y_hat)
-    #     val_loss = dec_classifier.compute_loss(val_y, val_y_hat)
+        train_loss = dec_classifier.compute_loss(train_y, train_y_hat)
+        val_loss = dec_classifier.compute_loss(val_y, val_y_hat)
 
-    #     grad = dec_classifier.get_grad(train_x, train_y, train_y_hat)
+        grad = dec_classifier.get_grad(train_x, train_y, train_y_hat)
        
-    #     # dec_classifier.numerical_check(train_x, train_y, grad)
-    #     # Updating weight: choose either normal SGD or SGD with momentum
-    #     dec_classifier.update_weight(grad, learning_rate)
-    #     #dec_classifier.update_weight_momentum(grad, learning_rate, momentum, momentum_rate)
+        # dec_classifier.numerical_check(train_x, train_y, grad)
+        # Updating weight: choose either normal SGD or SGD with momentum
+        dec_classifier.update_weight(grad, learning_rate)
+        #dec_classifier.update_weight_momentum(grad, learning_rate, momentum, momentum_rate)
 
-    #     all_train_loss.append(train_loss) 
-    #     all_val_loss.append(val_loss)
-    #     toc = time.clock()
-    #     print(toc-tic)
-    #     # [TODO 2.6]
-    #     # Propose your own stopping condition here
+        all_train_loss.append(train_loss) 
+        all_val_loss.append(val_loss)
+        
+        if (e % epochs_to_draw == epochs_to_draw-1):
+            plot_loss(all_train_loss, all_val_loss)
+            plt.show()
+            plt.pause(0.1)
+            print("Epoch %d: train loss is %f and val loss is %f" % (e+1, train_loss, val_loss))
+        # toc = time.clock()
+        # print(toc-tic)
+        # [TODO 2.6]
+        # Propose your own stopping condition here
+        if val_loss < 0.72:
+            break
+    print("Train finish is epoch : ",e)
+    print("Train loss in finish : ",train_loss)
+    print("Val loss in finish : ",val_loss)
 
-    # y_hat = dec_classifier.feed_forward(test_x)
-    # test(y_hat, test_y)
+    y_hat = dec_classifier.feed_forward(test_x)
+    test(y_hat, test_y)
