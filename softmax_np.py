@@ -170,12 +170,20 @@ def test(y_hat, test_y):
     # [TODO 2.7]
     # Compute the confusion matrix here
 
-    confusion_mat = confusion_mat/np.sum(confusion_mat,axis=1)
-    np.set_printoptions(precision=2)
-    print('Confusion matrix:')
-    print(confusion_mat)
-    print('Diagonal values:')
-    print(confusion_mat.flatten()[0::11])
+    # confusion_mat = confusion_mat/np.sum(confusion_mat,axis=1)
+    # np.set_printoptions(precision=2)
+    # print('Confusion matrix:')
+    # print(confusion_mat)
+    # print('Diagonal values:')
+    # print(confusion_mat.flatten()[0::11])
+
+    #Visualization confusion matrix by Seaborn
+    plt.figure(figsize=(5,4))
+    sns.heatmap(cm_df, annot=True)
+    plt.title('Confusion Matrix')
+    plt.ylabel('Actal Values')
+    plt.xlabel('Predicted Values')
+    plt.show()
 
 
 if __name__ == "__main__":
